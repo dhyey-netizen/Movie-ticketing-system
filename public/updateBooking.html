@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-container {
+            max-width: 400px;
+            background: white;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(8, 35px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .seat {
+            border: 2px solid lime;
+            border-radius: 5px;
+            font-size: 11px;
+            text-align: center;
+            line-height: 25px;
+            width: 30px;
+            height: 30px;
+            color: gray;
+            background: white;
+            cursor: pointer;
+        }
+
+        .seat.selected {
+            background: rgba(9, 135, 9, 1);
+            border-color: rgba(9, 135, 9, 1);
+            color: white;
+        }
+
+        .seat.booked {
+            background: gray;
+            border-color: gray;
+            color: white;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Update Your Booking</h2>
+
+    <div class="form-container">
+        <input type="email" id="email" placeholder="Enter Email">
+        <input type="password" id="password" placeholder="Enter Password">
+        <button onclick="loadBookedSeats()">Show My Seats</button>
+    </div>
+
+    <div class="row" id="seat-container"></div>
+
+    <script>
+        // Point this to your backend origin (your Express server)
+        const API_BASE = 'http://localhost:8000'; // <-- change if backend runs on a different host/port
+
+        const params = new URLSearchParams(window.location.search);
+        const movieId = params.get('id');
+
+        if (!movieId) {
+            // Friendly instruction instead of failing silently
+            alert('Missing movie id. Open this page with a movie id in the URL, e.g. updateBooking.html?id=0');
+        }
+
+        let selectedSeats = [];
+        let bookedSeats = [];
+
+        // Generate seat layout
+        function createSeats() {
+            const seatContainer = document.getElementById('seat-container');
+            seatContainer.innerHTML = '';
+            let ch = 65;
+            for (let i = 0; i < 8; i++) {
+                let rowLetter = String.fromCharCode(ch);
+                for (let j = 0; j < 8; j++) {
+                    let div = document.createElement('div');
+                    div.classList.add('seat');
+                    div.innerText = rowLetter + (j + 1).toString().padStart(2, '0');
+
+                    // Single click = select (only if not booked)
+                    div.addEventListener('click', () => {
+                        if (!div.classList.contains('booked')) {
+                            div.classList.toggle('selected');
+                            if (div.classList.contains('selected')) {
+                                selectedSeats.push(div.innerText);
+                            } else {
+                                selectedSeats = selectedSeats.filter(s => s !== div.innerText);
+                            }
+                        }
+                    });
+
+                    // Double click on booked seat = delete booking after confirm
+                    div.addEventListener('dblclick', async () => {
+                        if (div.classList.contains('booked')) {
+                            const confirmDelete = confirm(`Do you want to delete booking for ${div.innerText}?`);
+                            if (!confirmDelete) return;
+
+                            try {
+                                const res = await fetch(`${API_BASE}/api/removeSeat/${encodeURIComponent(movieId)}`, {
+                                    method: 'DELETE',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ seat: div.innerText })
+                                });
+
+                                if (!res.ok) {
+                                    const text = await res.text();
+                                    console.error('Failed to remove seat', res.status, text);
+                                    alert('Failed to remove seat on server. Check console.');
+                                    return;
+                                }
+
+                                // locally free the seat
+                                div.classList.remove('booked');
+                                div.classList.remove('selected');
+                                div.style.background = 'white';
+                                div.style.border = '2px solid lime';
+                                div.style.color = 'grey';
+                                alert(`${div.innerText} has been removed!`);
+                            } catch (err) {
+                                console.error('Network error while removing seat', err);
+                                alert('Network error while removing seat. Check console.');
+                            }
+                        }
+                    });
+
+                    seatContainer.appendChild(div);
+                }
+                ch++;
+            }
+        }
+
+        // Load booked seats for that movie
+        async function loadBookedSeats() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                return alert('Enter credentials');
+            }
+
+            if (!movieId) {
+                return alert('movie id missing in URL (use ?id=0)');
+            }
+
+            createSeats();
+
+            try {
+                const res = await fetch(`${API_BASE}/api/bookedSeats/${encodeURIComponent(movieId)}`);
+                if (!res.ok) {
+                    const text = await res.text();
+                    console.error('Failed to fetch booked seats:', res.status, text);
+                    return alert('Could not load booked seats from server. Check console for details.');
+                }
+
+                const data = await res.json();
+                bookedSeats = Array.isArray(data) ? data : [];
+
+                const allSeats = document.getElementsByClassName('seat');
+                for (let seat of allSeats) {
+                    if (bookedSeats.includes(seat.innerText)) {
+                        seat.classList.add('booked');
+                        seat.style.background = 'gray';
+                        seat.style.border = '2px solid gray';
+                        seat.style.color = 'white';
+                    }
+                }
+
+                alert("Double-click a gray (booked) seat to remove it. Click a free seat to select it.");
+            } catch (err) {
+                console.error('Network or parsing error while loading booked seats:', err);
+                alert('Error loading booked seats. Check console.');
+            }
+        }
+
+        // expose to global for your button onclick="loadBookedSeats()"
+        window.loadBookedSeats = loadBookedSeats;
+        // generate seats on first load so user sees layout (optional)
+        createSeats();
+    </script>
+
+</body>
+
+</html>

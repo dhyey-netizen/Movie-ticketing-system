@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Your Ticket</title>
+    <style>
+        body {
+            background: #ffffff;
+            text-align: center;
+            font-family: Arial;
+            padding-top: 50px;
+        }
+
+        #ticketBox {
+            margin: auto;
+            padding: 20px;
+            background: #f2f2f2;
+            width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="ticketBox">
+        <h3>Your Ticket 🎟</h3>
+        <p id="ticketDetails">Loading...</p>
+        <div id="qrcode"></div>
+        <br>
+        <a href="movieBook.html">Back to Booking</a>
+    </div>
+
+    <script src="qrcode.min.js"></script>
+    <script src="ticket.js"></script>
+</body>
+
+</html>

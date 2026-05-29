@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(to bottom right, #0d0d24, #1f1f4a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: 350px;
+            background: #111225;
+            padding: 35px;
+            border-radius: 26px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin: 10px 0 5px;
+            color: #cfcfcf;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            height: 45px;
+            background: #1b1b33;
+            border: none;
+            outline: none;
+            padding: 0 12px;
+            border-radius: 12px;
+            color: #fff;
+        }
+
+        .password-box {
+            position: relative;
+        }
+
+        .password-box .eye {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        input[type="submit"],
+        input[type="reset"] {
+            width: 48%;
+            height: 45px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        input[type="submit"] {
+            background: #596bff;
+            color: white;
+        }
+
+        input[type="reset"] {
+            background: #34345a;
+            color: white;
+        }
+
+        p {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #bfbfff;
+        }
+
+        a {
+            color: #8192ff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+
+        <h2>Login Form</h2>
+
+        <form id="login">
+
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" placeholder="Enter Email">
+
+            <label for="password">Password</label>
+            <div class="password-box">
+                <input type="password" name="password" id="password" placeholder="Enter Password">
+                <span class="eye" onclick="togglePassword()">👁️</span>
+            </div>
+
+            <input type="submit" value="Submit">
+            <input type="reset" value="Reset">
+
+        </form>
+
+        <p>Click here to <a href="register.html">Sign Up</a></p>
+
+    </div>
+
+</body>
+
+</html>
+
+<script src="login.js"></script>
+
+<script>
+    function togglePassword() {
+        let pass = document.getElementById("password");
+        pass.type = pass.type === "password" ? "text" : "password";
+    }
+</script>

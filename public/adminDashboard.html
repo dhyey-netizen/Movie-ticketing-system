@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Login & Dashboard</title>
+    <style>
+        body {
+            background: #f3f4f8;
+            font-family: Arial, sans-serif;
+            color: #222;
+            text-align: center;
+        }
+
+        .card {
+            margin: 50px auto;
+            width: 350px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 12px 18px;
+            width: 100%;
+            border: none;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #dashboard {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Admin Panel</h1>
+
+    <!-- Login Section -->
+    <div class="card" id="loginCard">
+        <h2>Admin Login</h2>
+        <input type="text" id="username" placeholder="Enter Username">
+        <input type="password" id="password" placeholder="Enter Password">
+        <button onclick="adminLogin()">Login</button>
+        <p id="error" style="color: red;"></p>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard">
+        <div class="card">
+            <h2>Active Users</h2>
+            <p id="activeUserCount">Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        function adminLogin() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById("loginCard").style.display = "none";
+                        document.getElementById("dashboard").style.display = "block";
+                        loadDashboard();
+                    } else {
+                        document.getElementById("error").textContent = "Invalid Credentials!";
+                    }
+                });
+        }
+
+        function loadDashboard() {
+            fetch('/api/admin/activeUsers')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("activeUserCount").textContent = data.activeUsers;
+                });
+        }
+    </script>
+
+</body>
+
+</html>

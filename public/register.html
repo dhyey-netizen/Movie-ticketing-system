@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+
+        /* ✅ Success Popup Styling */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+        }
+
+        .popup-content {
+            background: #111225;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 255, 100, 0.3);
+            transform: scale(0.5) rotateX(90deg);
+            animation: popup-appear 0.6s ease forwards;
+        }
+
+        @keyframes popup-appear {
+            from {
+                transform: scale(0.5) rotateX(90deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) rotateX(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* ✅ 3D Checkmark */
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            background: linear-gradient(145deg, #00b86b, #00ff99);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            animation: pulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(0, 255, 120, 0.3);
+            }
+
+            to {
+                transform: scale(1.05);
+                box-shadow: 0 0 40px rgba(0, 255, 120, 0.5);
+            }
+        }
+
+        .checkmark-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: transparent;
+        }
+
+        .checkmark-stem {
+            position: absolute;
+            width: 4px;
+            height: 25px;
+            background: #fff;
+            left: 37px;
+            top: 22px;
+            transform: rotate(45deg);
+            animation: draw-stem 0.4s ease forwards 0.5s;
+            opacity: 0;
+        }
+
+        .checkmark-kick {
+            position: absolute;
+            width: 4px;
+            height: 12px;
+            background: #fff;
+            left: 30px;
+            top: 34px;
+            transform: rotate(-45deg);
+            animation: draw-kick 0.3s ease forwards 0.9s;
+            opacity: 0;
+        }
+
+        @keyframes draw-stem {
+            to {
+                opacity: 1;
+                height: 25px;
+            }
+        }
+
+        @keyframes draw-kick {
+            to {
+                opacity: 1;
+                height: 12px;
+            }
+        }
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(to bottom right, #0d0d24, #1f1f4a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: 350px;
+            background: #111225;
+            padding: 35px;
+            border-radius: 26px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin: 10px 0 5px;
+            color: #cfcfcf;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            height: 45px;
+            background: #1b1b33;
+            border: none;
+            outline: none;
+            padding: 0 12px;
+            border-radius: 12px;
+            color: #fff;
+        }
+
+        .password-box {
+            position: relative;
+        }
+
+        .password-box .eye {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        input[type="submit"],
+        input[type="reset"] {
+            width: 48%;
+            height: 45px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        input[type="submit"] {
+            background: #596bff;
+            color: white;
+        }
+
+        input[type="reset"] {
+            background: #34345a;
+            color: white;
+        }
+
+        p {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #bfbfff;
+        }
+
+        a {
+            color: #8192ff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+
+        <h2>Register Form</h2>
+
+        <form id="form">
+
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" placeholder="Enter Name">
+
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" placeholder="Enter Email">
+
+            <label for="password">Password</label>
+            <div class="password-box">
+                <input type="password" name="password" id="password" placeholder="Create Password">
+                <span class="eye" onclick="togglePassword()">👁️</span>
+            </div>
+
+            <input type="submit" value="Submit">
+            <input type="reset" value="Reset">
+
+        </form>
+
+        <p>Already have an account? <a href="index.html">Login Here</a></p>
+
+    </div>
+
+    <!-- ✅ Success Popup -->
+    <div id="success-popup" class="popup">
+        <div class="popup-content">
+            <div class="checkmark">
+                <div class="checkmark-circle"></div>
+                <div class="checkmark-stem"></div>
+                <div class="checkmark-kick"></div>
+            </div>
+            <h3>Registration Successful!</h3>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+
+<script src="register.js"></script>
+
+<script>
+    function togglePassword() {
+        let pass = document.getElementById("password");
+        pass.type = pass.type === "password" ? "text" : "password";
+    }
+</script>

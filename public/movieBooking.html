@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Seat Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .seat-container {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .seat {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .seat.selected {
+            background-color: #6c5ce7;
+            color: #fff;
+        }
+
+        .seat.booked {
+            background-color: #ff7675;
+            cursor: not-allowed;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #6c5ce7;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        button.cancel {
+            background: #d63031;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>🎬 Movie Seat Booking</h2>
+    <div id="userInfo" style="text-align:center; margin-bottom: 10px;"></div>
+
+    <div class="seat-container" id="seatContainer"></div>
+
+    <div class="buttons">
+        <button id="confirmBtn">Confirm Booking</button>
+        <button id="cancelBtn" class="cancel">Cancel Booking</button>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const user_id = params.get('id');
+        const email = params.get('email');
+        const password = params.get('password');
+
+        const seatContainer = document.getElementById('seatContainer');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const userInfo = document.getElementById('userInfo');
+
+        let selectedSeats = [];
+        let bookedSeats = [];
+        const movie_id = 1;
+        const booking_date = new Date().toISOString().split('T')[0];
+
+        userInfo.innerHTML = `<b>Welcome:</b> ${email}`;
+
+        // Load booked seats from backend
+        async function loadSeats() {
+            seatContainer.innerHTML = '';
+            const response = await fetch(`http://localhost:8000/api/bookedSeats/${movie_id}`);
+            bookedSeats = await response.json();
+
+            for (let i = 1; i <= 40; i++) {
+                const seatCode = "S" + i;
+                const seat = document.createElement('div');
+                seat.classList.add('seat');
+                seat.textContent = i;
+
+                if (bookedSeats.includes(seatCode)) {
+                    seat.classList.add('booked');
+                }
+
+                seat.addEventListener('click', () => {
+                    if (seat.classList.contains('booked')) return;
+                    seat.classList.toggle('selected');
+                    if (seat.classList.contains('selected')) {
+                        selectedSeats.push(seatCode);
+                    } else {
+                        selectedSeats = selectedSeats.filter(s => s !== seatCode);
+                    }
+                });
+
+                seat.addEventListener('dblclick', () => {
+                    if (seat.classList.contains('booked')) {
+                        const confirmCancel = confirm(`Do you want to cancel seat ${seatCode}?`);
+                        if (confirmCancel) {
+                            cancelBooking(seatCode);
+                        }
+                    }
+                });
+
+                seatContainer.appendChild(seat);
+            }
+        }
+
+        async function cancelBooking(seatCode) {
+            bookedSeats = bookedSeats.filter(s => s !== seatCode);
+            alert(`Seat ${seatCode} cancelled.`);
+            await loadSeats();
+        }
+
+        confirmBtn.addEventListener('click', async () => {
+            if (selectedSeats.length === 0) {
+                alert('Please select at least one seat.');
+                return;
+            }
+
+            const bookingData = {
+                user_id,
+                movie_id,
+                booking_date,
+                quantity: selectedSeats.length,
+                total_price: selectedSeats.length * 120,
+                selected_seats: selectedSeats
+            };
+
+            const response = await fetch('http://localhost:8000/book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingData)
+            });
+
+            const result = await response.json();
+            alert(result.message || 'Booking confirmed!');
+            selectedSeats = [];
+            await loadSeats();
+        });
+
+        cancelBtn.addEventListener('click', async () => {
+            if (selectedSeats.length === 0) {
+                alert('No seats selected to cancel.');
+                return;
+            }
+            if (confirm('Do you really want to cancel your selection?')) {
+                selectedSeats = [];
+                await loadSeats();
+            }
+        });
+
+        loadSeats();
+    </script>
+</body>
+
+</html>

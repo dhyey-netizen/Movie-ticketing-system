@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/movieBook.css">
+  </head>
+<body>
+    <nav>
+      <div class="heading">
+        <div id="title"></div>
+        <div id="date"></div>
+        <div id="desc"></div>
+      </div>
+
+    </nav>
+    <div class="row">
+    </div>
+  
+    <div class="screen-box">
+        <div class="screen"></div>
+        <div style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;text-align: center; margin-top: 5px;">All eyes this way</div>
+    </div>
+
+    <footer><div id="price-box" onclick="submit()"></div></footer>
+<!-- 
+    <div id="popup-overlay">
+      <div id="popup">
+        <h3>Confirm Your Booking</h3>
+        <form id="booking-form">
+          <label>Email:</label>
+          <input type="email" id="email" placeholder="Enter your email" required>
+
+          <label>Password:</label>
+          <input type="text" id="password" placeholder="Enter your Password" required>
+
+          <div class="popup-buttons">
+            <button type="button" id="cancel-btn">Cancel</button>
+            <button type="submit" id="confirm-btn">Confirm Booking</button>
+          </div>
+        </form>
+      </div>
+    </div> -->
+
+    <!-- Existing popup overlay -->
+<div id="popup-overlay" style="display:none;">
+    <div id="popup">
+      <h3>Confirm Your Booking</h3>
+      <form id="booking-form">
+        <label>Email:</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
+        <label>Password:</label>
+        <input type="password" id="password" placeholder="Enter your Password" required>
+
+        <div class="popup-buttons">
+          <button type="button" id="cancel-btn">Cancel</button>
+          <button type="submit" id="confirm-btn">Confirm Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+ <div id="payment-overlay" style="display:none;">
+    <div id="payment-popup">
+      <h3>Complete Payment</h3>
+      <p id="payment-amount"></p>
+
+      <label>Card Number:</label>
+      <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" required>
+
+      <label>Expiry Date:</label>
+      <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+
+      <label>CVV:</label>
+      <input type="password" id="cvv" placeholder="XXX" maxlength="3" required>
+
+      <div class="popup-buttons">
+        <button type="button" id="cancel-payment">Cancel</button>
+        <button type="button" id="pay-now">Pay Now</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
+</body>
+</html>
+<script src="/movieBook.js"></script>
